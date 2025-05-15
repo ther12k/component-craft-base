@@ -10,13 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu, Moon, Sun, User } from 'lucide-react';
+import { Menu, PanelLeft, PanelLeftClose, Moon, Sun, User } from 'lucide-react';
 
 interface NavbarProps {
   toggleSidebar: () => void;
+  sidebarOpen: boolean;
 }
 
-const Navbar = ({ toggleSidebar }: NavbarProps) => {
+const Navbar = ({ toggleSidebar, sidebarOpen }: NavbarProps) => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -29,7 +30,11 @@ const Navbar = ({ toggleSidebar }: NavbarProps) => {
         onClick={toggleSidebar}
         className="mr-4"
       >
-        <Menu className="h-5 w-5" />
+        {sidebarOpen ? (
+          <PanelLeftClose className="h-5 w-5" />
+        ) : (
+          <PanelLeft className="h-5 w-5" />
+        )}
       </Button>
 
       <div className="flex-1">

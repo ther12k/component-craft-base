@@ -1,13 +1,5 @@
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
+import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash, MoreHorizontal } from "lucide-react";
+import { DataTable, Column } from "@/components/data-table/DataTable";
 
 interface User {
   id: string;
@@ -45,76 +38,83 @@ const UsersTable = ({ users, loading, onEdit, onDelete }: UsersTableProps) => {
     });
   };
 
-  if (loading) {
-    return <p>Loading users...</p>;
-  }
+  const columns: Column<User>[] = [
+    {
+      header: "Name",
+      accessorKey: "name",
+      sortable: true,
+    },
+    {
+      header: "Email",
+      accessorKey: "email",
+      sortable: true,
+    },
+    {
+      header: "Role",
+      accessorKey: "role",
+      cell: (row) => <span className="capitalize">{row.role}</span>,
+      sortable: true,
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: (row) => (
+        <Badge
+          variant={row.status === 'active' ? 'default' : 'secondary'}
+          className={row.status === 'active' ? 'bg-green-500' : ''}
+        >
+          {row.status}
+        </Badge>
+      ),
+      sortable: true,
+    },
+    {
+      header: "Joined",
+      accessorKey: "createdAt",
+      cell: (row) => formatDate(row.createdAt),
+      sortable: true,
+    },
+    {
+      header: "Actions",
+      accessorKey: "actions",
+      cell: (row) => (
+        <div className="text-right">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => onEdit(row)}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(row.id)}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="border rounded-md">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Joined</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center py-6">
-                No users found
-              </TableCell>
-            </TableRow>
-          ) : (
-            users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell className="capitalize">{user.role}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={user.status === 'active' ? 'default' : 'secondary'}
-                    className={user.status === 'active' ? 'bg-green-500' : ''}
-                  >
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{formatDate(user.createdAt)}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => onEdit(user)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onDelete(user.id)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+    <DataTable
+      columns={columns}
+      data={users}
+      loading={loading}
+      searchKey="name"
+      searchPlaceholder="Search by name..."
+    />
   );
 };
 

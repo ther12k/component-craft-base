@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Home, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SidebarProps {
   open: boolean;
@@ -28,7 +29,7 @@ const Sidebar = ({ open }: SidebarProps) => {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-16 z-20 h-[calc(100vh-4rem)] w-64 bg-background border-r transition-transform lg:translate-x-0',
+        'fixed left-0 top-16 z-20 h-[calc(100vh-4rem)] w-64 bg-background border-r transition-all lg:translate-x-0',
         open ? 'translate-x-0' : '-translate-x-full'
       )}
     >
